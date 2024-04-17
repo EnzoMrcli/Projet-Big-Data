@@ -2,7 +2,7 @@
 
 [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)  [![forthebadge](http://forthebadge.com/images/badges/powered-by-electricity.svg)](http://forthebadge.com)
 
-This project contains ELT/ETL jobs designed to streamline data extraction, loading, and transformation processes.
+Taking a cue from the Cloud Healthcare Unit's (CHU) endeavors to digitally transform its operations, this project aims to deliver a decision-making architecture and includes ELT/ETL jobs designed to streamline data extraction, loading, and transformation processes.
 
 # Summary
 
