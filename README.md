@@ -2,7 +2,7 @@
 
 [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)  [![forthebadge](http://forthebadge.com/images/badges/powered-by-electricity.svg)](http://forthebadge.com)
 
-This project consists of ELT jobs designed to streamline data extraction, loading, and transformation processes.
+This project contains ELT/ETL jobs designed to streamline data extraction, loading, and transformation processes.
 
 # Summary
 
