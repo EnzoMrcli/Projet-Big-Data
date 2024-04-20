@@ -1,10 +1,6 @@
 #!/bin/bash
 # create_hospitalisation.sh
-LOG_PATH="/home/cloudera/script_automatisation/logs/logs.txt"
-
-log_message() {
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> "$LOG_PATH"
-}
+source /home/cloudera/script_automatisation/scripts/initialisation.sh
 
 # Vérification de l'existence de la table
 table_exists=$(hive -e "USE healthcare; SHOW TABLES LIKE 'hospitalisation';")

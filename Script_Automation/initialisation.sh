@@ -5,11 +5,11 @@ export DATA_PATH="/user/hive/data"
 export LOCAL_DATA_PATH="/user/cloudera/DatawareHouse"  
 export LOCAL_SCRIPT_PATH="/home/cloudera/script_automatisation/scripts"
 export LOCAL_LOGS_PATH="/home/cloudera/script_automatisation/logs"
-export LOCAL_LOG_PATH="/home/cloudera/script_automatisation/logs"
+export LOCAL_LOG_FILE="$LOCAL_LOGS_PATH/logs.txt"  
 
 # Fonction pour loguer les messages
 log_message() {
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> "$LOCAL_LOG_PATH/initialisation.log"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> "$LOCAL_LOG_FILE"
 }
 
 # Création des dossiers locaux pour scripts et logs 
