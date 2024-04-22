@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/bin/bash /home/cloudera/script_automatisation/main.sh
+ExecStart=/bin/bash /home/cloudera/script_automatisation/scripts/main.sh
 Restart=always
 RestartSec=5
 User=cloudera

@@ -27,7 +27,8 @@ verify_table() {
     # Vérifiez les partitions si la table est partitionnée
     if [[ "$table_name" == "ConsultationPatient_Diagnostic_Temps" || 
           "$table_name" == "ConsultationPatient_Etablissement_Temps" ||
-          "$table_name" == "HospitalisationPatient_Diagnostic" ]]; then
+          "$table_name" == "HospitalisationPatient_Diagnostic" ||
+          "$table_name" == "SatisfactionRegion" ]]; then  
         local partitions=$(hive -e "USE healthcare; SHOW PARTITIONS $table_name;")
         log_message "Partitions in $table_name: $partitions"
     fi
@@ -42,8 +43,10 @@ tables=(
     "HospitalisationAge",
     "HospitalisationPatient",
     "HospitalisationPatient_Diagnostic",
-    "HospitalisationSexe"
+    "HospitalisationSexe",
+    "SatisfactionRegion"  
 )
+
 
 # Parcourez les tables et effectuez une vérification
 for table in "${tables[@]}"; do
