@@ -12,13 +12,25 @@ log_message() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> "$LOCAL_LOG_FILE"
 }
 
-# Création des dossiers locaux pour scripts et logs 
-mkdir -p $LOCAL_SCRIPT_PATH
-mkdir -p $LOCAL_LOGS_PATH
+setup_dir() {
+    # Création des dossiers locaux pour logs s'ils n'existent pas
+    chmod -R 777 $LOCAL_SCRIPT_PATH
+    if [ ! -d "$LOCAL_LOGS_PATH" ]; then
+        mkdir -p $LOCAL_LOGS_PATH
+        chmod -R 777 $LOCAL_LOGS_PATH
+    fi
+}
 
-# Définir les droits d'accès aux scripts et logs 
-chmod -R 777 $LOCAL_SCRIPT_PATH
-chmod -R 777 $LOCAL_LOGS_PATH
+# Création de la base de données si elle n'existe pas
+create_healthcare_db() {
+    local db_exists=$(hive -e "SHOW DATABASES LIKE 'healthcare';")
+    if [[ -z "$db_exists" ]]; then
+        hive -e "CREATE DATABASE healthcare;"
+        log_message "Database healthcare created."
+    else
+        log_message "Database healthcare already exists."
+    fi
+}
 
 # Configuration initiale pour HDFS
 setup_hdfs() {
@@ -54,6 +66,7 @@ move_txt_files() {
 
 # Exécuter les fonctions lors de l'appel direct du script
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    setup_dir
     setup_hdfs
     setup_hive_config
     move_txt_files

@@ -1,38 +1,33 @@
 #!/bin/bash
-# create_deces.sh
+# create_Deces.sh
 source /home/cloudera/script_automatisation/scripts/initialisation.sh
 
 # Vérification de l'existence de la table
-table_exists=$(hive -e "USE healthcare; SHOW TABLES LIKE 'deces';")
+table_exists=$(hive -e "USE healthcare; SHOW TABLES LIKE 'Deces';")
 
-if [[ $table_exists == *"deces"* ]]; then
-    log_message "Table deces already exists ..."
-    hive -e "USE healthcare; DROP TABLE deces;"
-    log_message "Table deces dropped successfully."
+if [[ $table_exists == *"Deces"* ]]; then
+    log_message "Table Deces already exists ..."
+    hive -e "USE healthcare; DROP TABLE Deces;"
+    log_message "Table Deces dropped successfully."
 fi
 
-log_message "Table deces does not exist, creating table..."
-hive_query="USE healthcare; CREATE EXTERNAL TABLE IF NOT EXISTS deces (
-    id_deces INT,
-    nom STRING,
-    prenom STRING,
-    sexe STRING,
-    code_lieu_naissance STRING,
-    lieu_naissance STRING,
-    pays_naissance STRING,
-    code_lieu_deces STRING,
-    numero_acte_deces STRING
+log_message "Table Deces does not exist, creating table..."
+hive_query="USE healthcare; CREATE EXTERNAL TABLE IF NOT EXISTS Deces (
+    Region STRING,
+    nb_deces INT
 )
-CLUSTERED BY (id_deces) INTO 4 BUCKETS
+CLUSTERED BY (Region) INTO 4 BUCKETS
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY '\;'
 STORED AS TEXTFILE
-LOCATION '/user/hive/data';"
+LOCATION '/user/hive/data/Deces';
+"
+
 if hive -e "$hive_query"; then
-    log_message "Table deces created and bucketed successfully."
+    log_message "Table Deces created and bucketed successfully."
     # Peupler les buckets
-    hive -e "USE healthcare; INSERT OVERWRITE TABLE deces SELECT * FROM deces;"
-    log_message "Table deces bucketed and data populated."
+    hive -e "USE healthcare; INSERT OVERWRITE TABLE Deces SELECT * FROM Deces;"
+    log_message "Table Deces bucketed and data populated."
 else
-    log_message "Failed to create and bucket the deces table."
+    log_message "Failed to create and bucket the Deces table."
 fi

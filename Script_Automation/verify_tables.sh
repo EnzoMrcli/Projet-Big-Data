@@ -17,7 +17,7 @@ verify_table() {
     fi
 
     # Vérifier la présence de données dans la table
-    local has_data=$(hive -e "USE healthcare; SELECT 1 FROM $table_name LIMIT 3;")
+    local has_data=$(hive -e "USE healthcare; SELECT 1 FROM $table_name LIMIT 1;")
     if [[ -n "$has_data" ]]; then
         log_message "Data verification successful for $table_name. Data is present."
     else
@@ -25,14 +25,25 @@ verify_table() {
     fi
 
     # Vérifiez les partitions si la table est partitionnée
-    if [[ "$table_name" == "consultation" || "$table_name" == "deces" || "$table_name" == "diagnostic" || "$table_name" == "hospitalisation" || "$table_name" == "professionnelsante" ]]; then
+    if [[ "$table_name" == "ConsultationPatient_Diagnostic_Temps" || 
+          "$table_name" == "ConsultationPatient_Etablissement_Temps" ||
+          "$table_name" == "HospitalisationPatient_Diagnostic" ]]; then
         local partitions=$(hive -e "USE healthcare; SHOW PARTITIONS $table_name;")
         log_message "Partitions in $table_name: $partitions"
     fi
 }
 
-# Liste des tables à vérifier
-tables=("consultation" "deces" "diagnostic" "hospitalisation" "professionnelsante" "etablissementsante" "patient" "tempsconsultation" "tempshospitalisation")
+# Liste des tables à vérifier avec les nouveaux noms adaptés aux fichiers de données
+tables=(
+    "ConsultationPatient_Diagnostic_Temps",
+    "ConsultationPatient_Etablissement_Temps",
+    "ConsultationProfessionnel",
+    "Deces",
+    "HospitalisationAge",
+    "HospitalisationPatient",
+    "HospitalisationPatient_Diagnostic",
+    "HospitalisationSexe"
+)
 
 # Parcourez les tables et effectuez une vérification
 for table in "${tables[@]}"; do
