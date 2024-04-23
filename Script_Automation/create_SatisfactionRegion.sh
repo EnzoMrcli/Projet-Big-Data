@@ -1,47 +1,48 @@
 #!/bin/bash
-# create_SatisfactionRegion.sh
 source /home/cloudera/script_automatisation/scripts/initialisation.sh
 
 # Définir le chemin du nouveau dossier de données
 data_directory="$DATA_PATH/SatisfactionRegion"
 
-# Vérification de l'existence de la table
-table_exists=$(hive -e "USE healthcare; SHOW TABLES LIKE 'SatisfactionRegion';")
+# Vérification et préparation du dossier de données
+log_message "Checking data directory $data_directory..."
+if hdfs dfs -test -d $data_directory; then
+    hdfs dfs -rm -r $data_directory
+    log_message "Existing data directory removed."
+fi
+hdfs dfs -mkdir -p $data_directory
+log_message "Data directory created at $data_directory."
 
-if [[ $table_exists == *"SatisfactionRegion"* ]]; then
-    log_message "Table SatisfactionRegion already exists ..."
+# Déplacer le fichier de données au bon emplacement
+log_message "Moving data files..."
+hdfs dfs -mv "$DATA_PATH/SatisfactionRegion.txt" $data_directory
+hdfs dfs -chown -R cloudera:cloudera $data_directory/SatisfactionRegion.txt
+hdfs dfs -chmod 777 $data_directory/*
+log_message "Data files moved and permissions set."
+
+# Vérification de l'existence de la table externe
+external_table_exists=$(hive -e "USE healthcare; SHOW TABLES LIKE 'SatisfactionRegion';")
+if [[ $external_table_exists == *"SatisfactionRegion"* ]]; then
     hive -e "USE healthcare; DROP TABLE SatisfactionRegion;"
-    log_message "Table SatisfactionRegion dropped successfully."
+    log_message "External table SatisfactionRegion dropped successfully."
 fi
 
-log_message "Preparing data directory..."
-# Assurer que le dossier de données existe et est vide
-hdfs dfs -mkdir -p $data_directory
-hdfs dfs -rm -r $data_directory/*
-
-# Déplacer le fichier de données au bon emplacement si nécessaire
-hdfs dfs -mv "$LOCAL_DATA_PATH/SatisfactionRegion.txt" $data_directory
-hdfs dfs -chmod 777 "$data_directory/*"
-
-log_message "Table SatisfactionRegion does not exist, creating table..."
-hive_query="USE healthcare; CREATE EXTERNAL TABLE IF NOT EXISTS SatisfactionRegion (
+# Création de la table externe
+log_message "Creating external table..."
+hive_query_external="USE healthcare;
+CREATE EXTERNAL TABLE IF NOT EXISTS SatisfactionRegion (
     region_1 STRING,
-    taux_satisfaction DOUBLE
+    taux_satisfaction FLOAT
 )
-CLUSTERED BY (region_1) INTO 4 BUCKETS
 ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ';'
+FIELDS TERMINATED BY '\;'
 STORED AS TEXTFILE
 LOCATION '$data_directory';
 "
 
-if hive -e "$hive_query"; then
-    log_message "Table SatisfactionRegion created and bucketed successfully."
-    hdfs dfs -chmod 777 "$data_directory/*"
-
-    # Peupler les buckets
-    hive -e "USE healthcare; INSERT OVERWRITE TABLE SatisfactionRegion SELECT * FROM SatisfactionRegion;"
-    log_message "Table SatisfactionRegion bucketed and data populated."
+if hive -e "$hive_query_external"; then
+    log_message "External table SatisfactionRegion created successfully."
 else
-    log_message "Failed to create and bucket the SatisfactionRegion table."
+    log_message "Failed to create external table SatisfactionRegion."
+    exit 1
 fi

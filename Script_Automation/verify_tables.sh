@@ -6,31 +6,22 @@ source /home/cloudera/script_automatisation/scripts/initialisation.sh
 
 # Fonction pour vérifier les données et la structure de la table
 verify_table() {
-    local table_name=$1
-    log_message "Starting verification for table: $table_name"
+    local table=$1
+    log_message "Starting verification for table: $table"
 
     # Vérifiez si la table existe
-    local table_exists=$(hive -e "USE healthcare; SHOW TABLES LIKE '$table_name';")
+    local table_exists=$(hive -e "USE healthcare; SHOW TABLES LIKE '$table';")
     if [[ -z "$table_exists" ]]; then
-        log_message "Verification failed: Table $table_name does not exist."
+        log_message "Verification failed: Table $table does not exist."
         return
     fi
 
     # Vérifier la présence de données dans la table
-    local has_data=$(hive -e "USE healthcare; SELECT 1 FROM $table_name LIMIT 1;")
+    local has_data=$(hive -e "USE healthcare; SELECT 1 FROM $table LIMIT 1;")
     if [[ -n "$has_data" ]]; then
-        log_message "Data verification successful for $table_name. Data is present."
+        log_message "Data verification successful for $table. Data is present."
     else
-        log_message "Data verification warning for $table_name: No data found!"
-    fi
-
-    # Vérifiez les partitions si la table est partitionnée
-    if [[ "$table_name" == "ConsultationPatient_Diagnostic_Temps" || 
-          "$table_name" == "ConsultationPatient_Etablissement_Temps" ||
-          "$table_name" == "HospitalisationPatient_Diagnostic" ||
-          "$table_name" == "SatisfactionRegion" ]]; then  
-        local partitions=$(hive -e "USE healthcare; SHOW PARTITIONS $table_name;")
-        log_message "Partitions in $table_name: $partitions"
+        log_message "Data verification warning for $table: No data found!"
     fi
 }
 

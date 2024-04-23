@@ -1,47 +1,48 @@
 #!/bin/bash
-# create_HospitalisationAge.sh
 source /home/cloudera/script_automatisation/scripts/initialisation.sh
 
 # Définir le chemin du nouveau dossier de données
 data_directory="$DATA_PATH/HospitalisationAge"
 
-# Vérification de l'existence de la table
-table_exists=$(hive -e "USE healthcare; SHOW TABLES LIKE 'HospitalisationAge';")
+# Vérification et préparation du dossier de données
+log_message "Checking data directory $data_directory..."
+if hdfs dfs -test -d $data_directory; then
+    hdfs dfs -rm -r $data_directory
+    log_message "Existing data directory removed."
+fi
+hdfs dfs -mkdir -p $data_directory
+log_message "Data directory created at $data_directory."
 
-if [[ $table_exists == *"HospitalisationAge"* ]]; then
-    log_message "Table HospitalisationAge already exists ..."
+# Déplacer le fichier de données au bon emplacement
+log_message "Moving data files..."
+hdfs dfs -mv "$DATA_PATH/HospitalisationAge.txt" $data_directory
+hdfs dfs -chown -R cloudera:cloudera $data_directory/HospitalisationAge.txt
+hdfs dfs -chmod 777 $data_directory/*
+log_message "Data files moved and permissions set."
+
+# Vérification de l'existence de la table externe
+external_table_exists=$(hive -e "USE healthcare; SHOW TABLES LIKE 'HospitalisationAge';")
+if [[ $external_table_exists == *"HospitalisationAge"* ]]; then
     hive -e "USE healthcare; DROP TABLE HospitalisationAge;"
-    log_message "Table HospitalisationAge dropped successfully."
+    log_message "External table HospitalisationAge dropped successfully."
 fi
 
-log_message "Preparing data directory..."
-# Assurer que le dossier de données existe et est vide
-hdfs dfs -mkdir -p $data_directory
-hdfs dfs -rm -r $data_directory/*
-
-# Déplacer le fichier de données au bon emplacement si nécessaire
-hdfs dfs -mv "$LOCAL_DATA_PATH/HospitalisationAge.txt" $data_directory
-hdfs dfs -chmod 777 "$data_directory/*"
-
-log_message "Table HospitalisationAge does not exist, creating table..."
-hive_query="USE healthcare; CREATE EXTERNAL TABLE IF NOT EXISTS HospitalisationAge (
+# Création de la table externe
+log_message "Creating external table..."
+hive_query_external="USE healthcare;
+CREATE EXTERNAL TABLE IF NOT EXISTS HospitalisationAge (
     Age INT,
     nb_hospitalisation INT
 )
-CLUSTERED BY (Age) INTO 4 BUCKETS
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY '\;'
 STORED AS TEXTFILE
 LOCATION '$data_directory';
 "
 
-if hive -e "$hive_query"; then
-    log_message "Table HospitalisationAge created and bucketed successfully."
-    hdfs dfs -chmod 777 "$data_directory/*"
-
-    # Peupler les buckets
-    hive -e "USE healthcare; INSERT OVERWRITE TABLE HospitalisationAge SELECT * FROM HospitalisationAge;"
-    log_message "Table HospitalisationAge bucketed and data populated."
+if hive -e "$hive_query_external"; then
+    log_message "External table HospitalisationAge created successfully."
 else
-    log_message "Failed to create and bucket the HospitalisationAge table."
+    log_message "Failed to create external table HospitalisationAge."
+    exit 1
 fi

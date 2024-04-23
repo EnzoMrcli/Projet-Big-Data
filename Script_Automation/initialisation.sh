@@ -41,9 +41,9 @@ setup_hdfs() {
 
 # Configuration de Hive pour le partitionnement dynamique et le bucketing
 setup_hive_config() {
-    hive -e "SET hive.exec.dynamic.partition=true;"
-    hive -e "SET hive.exec.dynamic.partition.mode=nonstrict;"
-    hive -e "SET hive.enforce.bucketing=true;"
+    hive -e "USE healthcare; SET hive.exec.dynamic.partition=true;"
+    hive -e "USE healthcare; SET hive.exec.dynamic.partition.mode=nonstrict;"
+    hive -e "USE healthcare;SET hive.enforce.bucketing=true;"
     log_message "Hive configurations for dynamic partitioning and bucketing set."
 }
 
