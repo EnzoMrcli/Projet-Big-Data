@@ -11,6 +11,7 @@ if hdfs dfs -test -d $data_directory; then
     log_message "Existing data directory removed."
 fi
 hdfs dfs -mkdir -p $data_directory
+hdfs dfs -chmod 777 $data_directory
 log_message "Data directory created at $data_directory."
 
 # Déplacer le fichier de données au bon emplacement

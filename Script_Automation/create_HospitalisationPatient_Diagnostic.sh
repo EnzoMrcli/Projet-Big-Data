@@ -11,6 +11,7 @@ if hdfs dfs -test -d $data_directory; then
     log_message "Existing data directory removed."
 fi
 hdfs dfs -mkdir -p $data_directory
+hdfs dfs -chmod 777 $data_directory
 log_message "Data directory created at $data_directory."
 
 # Déplacer le fichier de données au bon emplacement
@@ -39,7 +40,8 @@ CREATE EXTERNAL TABLE IF NOT EXISTS external_HospitalisationPatient_Diagnostic (
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY '\;'
 STORED AS TEXTFILE
-LOCATION '$data_directory';
+LOCATION '$data_directory'
+TBLPROPERTIES ('skip.header.line.count'='1');
 "
 
 if hive -e "$hive_query_external"; then
