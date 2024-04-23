@@ -59,18 +59,19 @@ else
     exit 1
 fi
 
-hive -e "USE healthcare; SET hive.exec.dynamic.partition=true; SET hive.exec.dynamic.partition.mode=nonstrict; SET hive.conf.validation=false; SET hive.enforce.bucketing=true;"
-
 # Création de la table interne avec partitionnement et bucketing
 log_message "Creating internal table with partition and buckets..."
 hive_query_internal="USE healthcare; CREATE TABLE IF NOT EXISTS ConsultationPatient_Diagnostic_Temps (
     Id_patient INT,
     Diagnostic STRING
 )
-PARTITIONED BY (Date DATE)
+PARTITIONED BY (Date STRING)
 CLUSTERED BY (Id_patient) INTO 4 BUCKETS
-STORED AS ORC;
+ROW FORMAT 
+DELIMITED FIELDS TERMINATED BY '\;'
+STORED AS TEXTFILE;
 "
+hive -e "USE healthcare; SET hive.exec.dynamic.partition=true; SET hive.exec.dynamic.partition.mode=nonstrict; SET hive.conf.validation=false; SET hive.enforce.bucketing=true;"
 
 if hive -e "$hive_query_internal"; then
     log_message "Internal table ConsultationPatient_Diagnostic_Temps created successfully with partition and buckets."
