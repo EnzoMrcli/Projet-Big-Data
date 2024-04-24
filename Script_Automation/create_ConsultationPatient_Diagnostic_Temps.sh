@@ -71,14 +71,13 @@ ROW FORMAT
 DELIMITED FIELDS TERMINATED BY '\;'
 STORED AS TEXTFILE;
 "
-hive -e "USE healthcare; SET hive.exec.dynamic.partition=true; SET hive.exec.dynamic.partition.mode=nonstrict; SET hive.conf.validation=false; SET hive.enforce.bucketing=true;"
 
 if hive -e "$hive_query_internal"; then
     log_message "Internal table ConsultationPatient_Diagnostic_Temps created successfully with partition and buckets."
 
     # Insertion des données dans la table interne depuis la table externe
     log_message "Inserting data into internal table from external table..."
-    hive -e "USE healthcare;
+    hive -e "USE healthcare; SET hive.exec.dynamic.partition=true; SET hive.exec.dynamic.partition.mode=nonstrict; SET hive.conf.validation=false; SET hive.enforce.bucketing=true;
     INSERT OVERWRITE TABLE ConsultationPatient_Diagnostic_Temps PARTITION (Date)
     SELECT Id_patient, Diagnostic, Date FROM external_ConsultationPatient_Diagnostic_Temps;
     "

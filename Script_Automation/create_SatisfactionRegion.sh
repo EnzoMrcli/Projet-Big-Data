@@ -22,16 +22,16 @@ hdfs dfs -chmod 777 $data_directory/*
 log_message "Data files moved and permissions set."
 
 # Vérification de l'existence de la table externe
-external_table_exists=$(hive -e "USE healthcare; SHOW TABLES LIKE 'SatisfactionRegion';")
-if [[ $external_table_exists == *"SatisfactionRegion"* ]]; then
-    hive -e "USE healthcare; DROP TABLE SatisfactionRegion;"
+external_table_exists=$(hive -e "USE healthcare; SHOW TABLES LIKE 'external_SatisfactionRegion';")
+if [[ $external_table_exists == *"external_SatisfactionRegion"* ]]; then
+    hive -e "USE healthcare; DROP TABLE external_SatisfactionRegion;"
     log_message "External table SatisfactionRegion dropped successfully."
 fi
 
 # Création de la table externe
 log_message "Creating external table..."
 hive_query_external="USE healthcare;
-CREATE EXTERNAL TABLE IF NOT EXISTS SatisfactionRegion (
+CREATE EXTERNAL TABLE IF NOT EXISTS external_SatisfactionRegion (
     region_1 STRING,
     taux_satisfaction FLOAT
 )

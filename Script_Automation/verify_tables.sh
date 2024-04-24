@@ -10,14 +10,14 @@ verify_table() {
     log_message "Starting verification for table: $table"
 
     # Vérifiez si la table existe
-    local table_exists=$(hive -e "USE healthcare; SHOW TABLES LIKE '$table';")
+    local table_exists=$(hive -e "USE healthcare; SHOW TABLES LIKE '${table}';")
     if [[ -z "$table_exists" ]]; then
         log_message "Verification failed: Table $table does not exist."
         return
     fi
 
     # Vérifier la présence de données dans la table
-    local has_data=$(hive -e "USE healthcare; SELECT 1 FROM $table LIMIT 1;")
+    local has_data=$(hive -e "USE healthcare; SELECT * FROM \`${table}\` LIMIT 1;")
     if [[ -n "$has_data" ]]; then
         log_message "Data verification successful for $table. Data is present."
     else
@@ -29,13 +29,13 @@ verify_table() {
 tables=(
     "ConsultationPatient_Diagnostic_Temps",
     "ConsultationPatient_Etablissement_Temps",
-    "ConsultationProfessionnel",
-    "Deces",
-    "HospitalisationAge",
+    "external_ConsultationProfessionnel",
+    "external_Deces",
+    "external_HospitalisationAge",
     "HospitalisationPatient",
     "HospitalisationPatient_Diagnostic",
-    "HospitalisationSexe",
-    "SatisfactionRegion"  
+    "external_HospitalisationSexe",
+    "external_SatisfactionRegion"  
 )
 
 

@@ -46,14 +46,14 @@ watch_and_process() {
 
 # Définition des scripts pour la création/mise à jour des tables
 declare -a scripts=(
-    "create_ConsultationPatient_Diagnostic_Temps.sh",
-    "create_ConsultationPatient_Etablissement_Temps.sh",
-    "create_ConsultationProfessionnel.sh",
-    "create_Deces.sh",
-    "create_HospitalisationAge.sh",
-    "create_HospitalisationPatient.sh",
-    "create_HospitalisationPatient_Diagnostic.sh",
-    "create_HospitalisationSexe.sh",
+    "create_ConsultationPatient_Diagnostic_Temps.sh"
+    "create_ConsultationPatient_Etablissement_Temps.sh"
+    "create_ConsultationProfessionnel.sh"
+    "create_Deces.sh"
+    "create_HospitalisationAge.sh"
+    "create_HospitalisationPatient.sh"
+    "create_HospitalisationPatient_Diagnostic.sh"
+    "create_HospitalisationSexe.sh"
     "create_SatisfactionRegion.sh"  
 )
 

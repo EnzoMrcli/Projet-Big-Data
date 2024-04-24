@@ -14,10 +14,10 @@ log_message() {
 
 setup_dir() {
     # Création des dossiers locaux pour logs s'ils n'existent pas
-    chmod -R 777 $LOCAL_SCRIPT_PATH
+    sudo chmod -R 777 $LOCAL_SCRIPT_PATH
     if [ ! -d "$LOCAL_LOGS_PATH" ]; then
         mkdir -p $LOCAL_LOGS_PATH
-        chmod -R 777 $LOCAL_LOGS_PATH
+        sudo chmod -R 777 $LOCAL_LOGS_PATH
     fi
 }
 
