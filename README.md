@@ -45,4 +45,8 @@ The main.sh script will periodically check for new data files and trigger the cr
 ### Logs
 The script logs all significant operations in a log file to facilitate tracking and diagnostics. Regularly check this file to stay informed about the script's execution status.
 
+# Authors 
 
+* **FODIL Nel** _alias_ [@nel34](https://github.com/nel34)
+* **GOUADFEL Rayan** _alias_ [@AirG213](https://github.com/AirG213)
+* **MARCELLI Enzo** _alias_ [@EnzoMrcli](https://github.com/EnzoMrcli)
